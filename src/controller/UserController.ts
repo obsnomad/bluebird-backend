@@ -26,6 +26,7 @@ class UserController {
             const user = await userRepository.findOneOrFail(id, {
                 select: ["id", "username", "role"] //We dont want to send the password on response
             });
+            res.send(user);
         } catch (error) {
             res.status(404).send("User not found");
         }
@@ -54,12 +55,11 @@ class UserController {
         try {
             await userRepository.save(user);
         } catch (e) {
-            res.status(409).send("username already in use");
+            res.status(409).send("Username already in use");
             return;
         }
 
-        //If all ok, send 201 response
-        res.status(201).send("User created");
+        res.status(200).send("User created");
     };
 
     static editUser = async (req: Request, res: Response) => {
@@ -93,11 +93,11 @@ class UserController {
         try {
             await userRepository.save(user);
         } catch (e) {
-            res.status(409).send("username already in use");
+            res.status(409).send("Username already in use");
             return;
         }
         //After all send a 204 (no content, but accepted) response
-        res.status(204).send();
+        res.status(200).send("User successfully updated");
     };
 
     static deleteUser = async (req: Request, res: Response) => {
@@ -115,7 +115,7 @@ class UserController {
         userRepository.delete(id);
 
         //After all send a 204 (no content, but accepted) response
-        res.status(204).send();
+        res.status(200).send("User successfully deleted");
     };
 }
 
