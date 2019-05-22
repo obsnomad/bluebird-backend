@@ -1,10 +1,10 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn, BaseEntity} from "typeorm";
 import {IsNotEmpty, Length} from "class-validator";
 import * as bcrypt from "bcryptjs";
 
 @Entity()
 @Unique(["username"])
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

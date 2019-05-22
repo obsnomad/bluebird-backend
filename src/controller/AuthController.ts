@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
-import {getRepository} from "typeorm";
 import {validate} from "class-validator";
 
 import {User} from "../entity/User";
@@ -15,10 +14,9 @@ class AuthController {
         }
 
         //Get user from database
-        const userRepository = getRepository(User);
         let user: User;
         try {
-            user = await userRepository.findOneOrFail({where: {username}});
+            user = await User.findOneOrFail({where: {username}});
         } catch (error) {
             res.status(401).send("Authentication problem");
         }
@@ -51,21 +49,20 @@ class AuthController {
         }
 
         //Get user from the database
-        const userRepository = getRepository(User);
         let user: User;
         try {
-            user = await userRepository.findOneOrFail(id);
+            user = await User.findOneOrFail(id);
         } catch (id) {
             res.status(401).send("User not found");
         }
 
-        //Check if old password matchs
+        //Check if old password matches
         if (!user.checkIfUnencryptedPasswordIsValid(oldPassword)) {
             res.status(401).send("Password is invalid");
             return;
         }
 
-        //Validate de model (password lenght)
+        //Validate the model (password length)
         user.password = newPassword;
         const errors = await validate(user);
         if (errors.length > 0) {
@@ -74,9 +71,9 @@ class AuthController {
         }
         //Hash the new password and save
         user.hashPassword();
-        userRepository.save(user);
+        await user.save();
 
-        res.status(200).send("Password changed successfully");
+        res.status(204).send();
     };
 }
 
